@@ -48,6 +48,7 @@ void Pipeline::Init(Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE exports) {
 	Nan::SetPrototypeMethod(ctor, "setPad", SetPad);
 	Nan::SetPrototypeMethod(ctor, "getPad", GetPad);
 	Nan::SetPrototypeMethod(ctor, "pollBus", PollBus);
+	Nan::SetPrototypeMethod(ctor, "quit", Quit);
 
 	Nan::SetAccessor(proto, Nan::New("auto-flush-bus").ToLocalChecked(), GetAutoFlushBus, SetAutoFlushBus);
 	Nan::SetAccessor(proto, Nan::New("delay").ToLocalChecked(), GetDelay, SetDelay);
@@ -217,6 +218,19 @@ NAN_METHOD(Pipeline::GetPad) {
 	} else {
 		info.GetReturnValue().Set(Nan::Undefined());
 	}
+}
+
+void Pipeline::Quit() {
+	gst_object_unref(GST_ELEMENT(pipeline));
+}
+
+NAN_METHOD(Pipeline::Quit) {
+	Pipeline* obj = Nan::ObjectWrap::Unwrap<Pipeline>(info.This());
+	if(!obj) {
+		return;
+	}
+
+	obj->Quit();
 }
 
 
