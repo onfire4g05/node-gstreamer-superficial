@@ -40,6 +40,7 @@ void Pipeline::Init(Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE exports) {
 	Nan::SetPrototypeMethod(ctor, "pause", Pause);
 	Nan::SetPrototypeMethod(ctor, "stop", Stop);
 	Nan::SetPrototypeMethod(ctor, "seek", Seek);
+	Nan::SetPrototypeMethod(ctor, "rate", Rate);
 	Nan::SetPrototypeMethod(ctor, "queryPosition", QueryPosition);
 	Nan::SetPrototypeMethod(ctor, "queryDuration", QueryDuration);
 	Nan::SetPrototypeMethod(ctor, "sendEOS", SendEOS);
@@ -118,6 +119,28 @@ NAN_METHOD(Pipeline::Seek) {
 	GstSeekFlags flags((GstSeekFlags)Nan::To<Int32>(info[1]).ToLocalChecked()->Value());
 
 	info.GetReturnValue().Set(Nan::New<Boolean>(obj->seek(t,flags)));
+}
+
+gboolean Pipeline::rate(double rate, GstSeekFlags flags) {
+	gint64 start_pos;
+	gst_element_query_position (GST_ELEMENT(pipeline), GST_FORMAT_TIME, &start_pos);
+	if(rate > 0) {
+		return gst_element_seek (GST_ELEMENT(pipeline), rate, GST_FORMAT_TIME, flags,
+								GST_SEEK_TYPE_SET, start_pos,
+								GST_SEEK_TYPE_END, 0);
+	} else {
+		return gst_element_seek (GST_ELEMENT(pipeline), rate, GST_FORMAT_TIME, flags,
+								GST_SEEK_TYPE_SET, 0,
+								GST_SEEK_TYPE_SET, start_pos);
+	}
+}
+
+NAN_METHOD(Pipeline::Rate) {
+	Pipeline* obj = Nan::ObjectWrap::Unwrap<Pipeline>(info.This());
+	double r(Nan::To<double>(info[0]).ToChecked());
+	GstSeekFlags flags((GstSeekFlags)Nan::To<Int32>(info[1]).ToLocalChecked()->Value());
+
+	info.GetReturnValue().Set(Nan::New<Boolean>(obj->rate(r,flags)));
 }
 
 gint64 Pipeline::queryPosition() {

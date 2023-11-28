@@ -14,6 +14,7 @@ class Pipeline : public Nan::ObjectWrap {
 		void pause();
 		void stop();
 		gboolean seek(gint64 time_nanoseconds, GstSeekFlags flags);
+		gboolean rate(double rate, GstSeekFlags flags);
 		gint64 queryPosition();
 		gint64 queryDuration();
 		void sendEOS();
@@ -40,6 +41,7 @@ class Pipeline : public Nan::ObjectWrap {
 		static NAN_METHOD(Pause);
 		static NAN_METHOD(Stop);
 		static NAN_METHOD(Seek);
+		static NAN_METHOD(Rate);
 		static NAN_METHOD(QueryPosition);
 		static NAN_METHOD(QueryDuration);
 		static NAN_METHOD(SendEOS);
