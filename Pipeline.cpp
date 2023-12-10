@@ -115,10 +115,11 @@ gboolean Pipeline::seek(gint64 time_seconds, GstSeekFlags flags) {
 NAN_METHOD(Pipeline::Seek) {
 	Pipeline* obj = Nan::ObjectWrap::Unwrap<Pipeline>(info.This());
 	gint64 t(Nan::To<int64_t>(info[0]).ToChecked());
-	t *= GST_SECOND;
+	bool useMs(Nan::To<bool>(info[2]).ToChecked());
+	t *= useMs ? GST_MSECOND : GST_SECOND;
 	GstSeekFlags flags((GstSeekFlags)Nan::To<Int32>(info[1]).ToLocalChecked()->Value());
 
-	info.GetReturnValue().Set(Nan::New<Boolean>(obj->seek(t,flags)));
+	info.GetReturnValue().Set(Nan::New<Boolean>(obj->seek(t, flags)));
 }
 
 gboolean Pipeline::rate(double rate, GstSeekFlags flags) {
@@ -151,8 +152,10 @@ gint64 Pipeline::queryPosition() {
 
 NAN_METHOD(Pipeline::QueryPosition) {
 	Pipeline* obj = Nan::ObjectWrap::Unwrap<Pipeline>(info.This());
+
 	gint64 t = obj->queryPosition();
-	double r = t==-1 ? -1 : (double)t/GST_SECOND;
+	bool useMs(Nan::To<bool>(info[0]).ToChecked());
+	double r = t==-1 ? -1 : (double)t/(useMs ? GST_MSECOND : GST_SECOND);
 
 	info.GetReturnValue().Set(Nan::New<Number>(r));
 }
@@ -166,7 +169,8 @@ gint64 Pipeline::queryDuration() {
 NAN_METHOD(Pipeline::QueryDuration) {
 	Pipeline* obj = Nan::ObjectWrap::Unwrap<Pipeline>(info.This());
 	gint64 t = obj->queryDuration();
-	double r = t==-1 ? -1 : (double)t/GST_SECOND;
+	bool useMs(Nan::To<bool>(info[1]).ToChecked());
+	double r = t==-1 ? -1 : (double)t/(useMs ? GST_MSECOND : GST_SECOND);
 
 	info.GetReturnValue().Set(Nan::New<Number>(r));
 }
