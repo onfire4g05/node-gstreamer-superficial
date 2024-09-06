@@ -3,7 +3,6 @@ declare module "gstreamer-superficial" {
 
 	type AppSink = {
 		pull: (callback: AppSinkCallback) => void
-
 	}
 
 	type AppSrc = {
