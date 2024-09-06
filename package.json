@@ -8,7 +8,7 @@
     "url": "http://danturing.com"
   },
   "types": "gstreamer-superficial.d.ts",
-  "main": "./build/Release/gstreamer-superficial",
+  "main": "./build/index.js",
   "repository": {
     "type": "git",
     "url": "git@github.com:dturing/node-gstreamer-superficial.git"
@@ -58,9 +58,11 @@
     }
   ],
   "dependencies": {
-    "nan": "^2.15.0"
+    "nan": "^2.15.0",
+    "typescript": "^5.2.2"
   },
   "devDependencies": {
+    "@types/node": "^22.5.4",
     "morgan": "^1.9.1"
   },
   "engines": {
@@ -68,7 +70,8 @@
   },
   "bin": {},
   "scripts": {
-    "install": "node-gyp rebuild"
+    "install": "node-gyp rebuild",
+    "postinstall": "tsc"
   },
   "gypfile": true,
   "readmeFilename": "README.md",
